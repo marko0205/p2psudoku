@@ -1,16 +1,16 @@
 FROM alpine/git 
 WORKDIR /app 
-RUN git clone https://github.com/marko0205/p2p-sudoku.git 
+RUN git clone https://github.com/marko0205/p2psudoku.git 
  
 FROM maven:3.5-jdk-8-alpine 
 WORKDIR /app 
-COPY --from=0 /app/p2p-sudoku /app 
+COPY --from=0 /app/p2psudoku /app 
 RUN mvn package 
  
 FROM openjdk:8-jre-alpine 
 WORKDIR /app 
 ENV MASTERIP=127.0.0.1 
 ENV ID=0 
-COPY --from=1 /app/target/P2PSudokuGame-jar-with-dependencies.jar /app 
+COPY --from=1 /app/target/p2psudoku-jar-with-dependencies.jar /app 
  
-CMD /usr/bin/java -jar P2PSudokuGame-jar-with-dependencies.jar -m $MASTERIP -id $ID
+CMD /usr/bin/java -jar p2psudoku-jar-with-dependencies.jar -m $MASTERIP -id $ID
