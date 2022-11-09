@@ -128,7 +128,7 @@ public class Client implements ClientInterface {
 
         		}
             } catch (NumberFormatException | ClassNotFoundException e) {
-                e.printStackTrace();
+              //  e.printStackTrace();
             }
             System.out.println("MyThread board- END "+Thread.currentThread().getName());
 
@@ -171,15 +171,22 @@ public class Client implements ClientInterface {
 	}
 
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
-		Client client = new Client(args);
-		client.start();
+		Client client;
+		try {
+			client = new Client(args);
+			client.start();
+		} catch (CmdLineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 
 	@Override
-	public void start() throws Exception {
+	public void start() {
 
 		textIO = TextIoFactory.getTextIO();
 		terminal = textIO.getTextTerminal();
@@ -191,11 +198,19 @@ public class Client implements ClientInterface {
 
 		terminal.setBookmark(book_clear);
 
-		printWelcome();
+		try {
+			printWelcome();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		terminal.resetToBookmark(book_clear);
 
-		showMenu();
+		try {
+			showMenu();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
