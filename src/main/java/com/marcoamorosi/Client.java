@@ -80,7 +80,7 @@ public class Client implements ClientInterface {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-            System.out.println("MyThread score - END "+Thread.currentThread().getName());
+           // System.out.println("MyThread score - END "+Thread.currentThread().getName());
 
 		}
 
@@ -130,7 +130,7 @@ public class Client implements ClientInterface {
             } catch (NumberFormatException | ClassNotFoundException e) {
               //  e.printStackTrace();
             }
-            System.out.println("MyThread board- END "+Thread.currentThread().getName());
+           // System.out.println("MyThread board- END "+Thread.currentThread().getName());
 
         }
     }
