@@ -100,13 +100,14 @@ public class Client implements ClientInterface {
 
 		@Override
         public void run() {
-            System.out.println("MyThread board- START "+Thread.currentThread().getName());
+           // System.out.println("MyThread board- START "+Thread.currentThread().getName());
             try {
             	// ! is an escape char
         		String colums = "ABCDEFGHI!";
         		String patternCol = "[a-iA-I]|!";
         		String patternRow = "[0-8]|!";
         		String patternVal = "[1-9]|!";
+
 
         		String gameName = gameInstance.getName();
         		Integer board[][] =  gameInstance.getGame();
@@ -117,7 +118,8 @@ public class Client implements ClientInterface {
             		//while(true) {
 
         			String jInLetter = textIO.newStringInputReader().read("Insert (Format A0=2): ");
-        			String arr[] = jInLetter.split("");
+
+					String arr[] = jInLetter.split("");
 
         			int j = colums.indexOf(arr[0].toUpperCase());
 
@@ -125,10 +127,11 @@ public class Client implements ClientInterface {
         				peer.placeNumber(gameName, Integer.parseInt(arr[1]), j, Integer.parseInt(arr[3]));
         			//	break;
         			//}
+						}
 
-        		}
-            } catch (NumberFormatException | ClassNotFoundException e) {
-              //  e.printStackTrace();
+
+            } catch (NumberFormatException | ClassNotFoundException | NullPointerException e) {
+               // e.printStackTrace();
             }
            // System.out.println("MyThread board- END "+Thread.currentThread().getName());
 
