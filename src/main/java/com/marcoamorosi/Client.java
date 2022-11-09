@@ -246,7 +246,7 @@ public class Client implements ClientInterface {
 		String gameName = gameInstace.getName();
 		Integer board[][] =  gameInstace.getGame();
 		ArrayList<String> scores = gameInstace.getAndUpdateScores();
-
+		terminal.printf("\033[H\033[2J");
 		while(true) {
 			terminal.resetToBookmark(book_clear);
 			printBoard(board, scores);
@@ -276,7 +276,7 @@ public class Client implements ClientInterface {
 
 	@Override
 	public void printScoreBoard(Sudoku gameInstance) {
-
+		terminal.printf("\033[H\033[2J");
 		ArrayList<String> scores = gameInstance.getAndUpdateScores();
 		terminal.resetToBookmark(book_clear);
 
@@ -300,7 +300,7 @@ public class Client implements ClientInterface {
 	@Override
 	public void printBoard(Integer board[][], ArrayList<String> scores) {
 //		terminal.resetToBookmark(book_clear);
-
+		terminal.printf("\033[H\033[2J");
 		int A = 0;
 		int B = 0;
 		terminal.printf("    A  B  C   D  E  F   G  H  I        Player\t\tScore   \n");
