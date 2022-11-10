@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.swing.tree.ExpandVetoException;
+
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
@@ -130,7 +132,7 @@ public class Client implements ClientInterface {
 						}
 
 
-            } catch (NumberFormatException | ClassNotFoundException | NullPointerException e) {
+            } catch (Exception e) {
                // e.printStackTrace();
             }
            // System.out.println("MyThread board- END "+Thread.currentThread().getName());
