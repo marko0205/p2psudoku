@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import javax.swing.tree.ExpandVetoException;
-
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
@@ -89,20 +87,20 @@ public class Client implements ClientInterface {
 
     }
 
-    public class MyThread extends Thread {
+    public class threadGameBoard extends Thread {
     	Sudoku gameInstance;
 
-        public MyThread(Sudoku gameInstance) {
+        public threadGameBoard(Sudoku gameInstance) {
             super();
             this.gameInstance=gameInstance;
         }
 
-        public MyThread() {
+        public threadGameBoard() {
 		}
 
 		@Override
         public void run() {
-           // System.out.println("MyThread board- START "+Thread.currentThread().getName());
+           // System.out.println("threadGameBoard - START "+Thread.currentThread().getName());
             try {
             	// ! is an escape char
         		String colums = "ABCDEFGHI!";
@@ -131,12 +129,11 @@ public class Client implements ClientInterface {
         			//}
 						}
 
-
+			// commented to avoid to print exceptions once the Thread is interrupted...   
             } catch (Exception e) {
                // e.printStackTrace();
             }
-           // System.out.println("MyThread board- END "+Thread.currentThread().getName());
-
+           // System.out.println("threadGameBoard - END "+Thread.currentThread().getName());
         }
     }
 
@@ -166,7 +163,7 @@ public class Client implements ClientInterface {
 
 			}
 			else {
-				t1 = new MyThread(gameInstance);
+				t1 = new threadGameBoard(gameInstance);
 				t1.start();
 			}
 
@@ -183,7 +180,6 @@ public class Client implements ClientInterface {
 			client = new Client(args);
 			client.start();
 		} catch (CmdLineException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -240,6 +236,7 @@ public class Client implements ClientInterface {
 	@Override
 	public void startNewGame() throws Exception {
 		terminal.resetToBookmark(book_clear);
+		terminal.printf("\033[H\033[2J");
 		
 		terminal.printf(" --------- N E W  G A M E ---------\n");
 		terminal.printf("\nPlease enter game name\n");
@@ -250,7 +247,7 @@ public class Client implements ClientInterface {
 
 		//terminal.printf("\033[H\033[2J");
 
-		t1 = new MyThread(gameInstance);
+		t1 = new threadGameBoard(gameInstance);
 		t1.start();
 		//inGame(gameInstance);
 
@@ -307,19 +304,16 @@ public class Client implements ClientInterface {
 		terminal.print("Players\t\tScores\n");
 		for(; x>=0; x--)
 			terminal.println(scores.get(x).toString());
-
 		try {
 			showMenu();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-
 	}
 
 	@Override
 	public void printBoard(Integer board[][], ArrayList<String> scores) {
-//		terminal.resetToBookmark(book_clear);
+		terminal.resetToBookmark(book_clear);
 		terminal.printf("\033[H\033[2J");
 		int A = 0;
 		int B = 0;
@@ -385,7 +379,7 @@ public class Client implements ClientInterface {
 
 			peer.join(gname);
 
-			t1 = new MyThread(peer.searchGame(gname));
+			t1 = new threadGameBoard(peer.searchGame(gname));
 
 			t1.start();
 

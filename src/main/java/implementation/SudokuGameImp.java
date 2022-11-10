@@ -27,6 +27,10 @@ public class SudokuGameImp  {
 	public Player user;
 	public Sudoku game_instance;
 
+	public void setUser(Player user) {
+		this.user = user;
+	}
+
 	public SudokuGameImp(int _id, String _master_peer, final MessageListener _listener) throws Exception {
 		peer = new PeerBuilder(Number160.createHash(_id)).ports(DEFAULT_MASTER_PORT + _id).start();
 		_dht = new PeerBuilderDHT(peer).start();
@@ -48,12 +52,13 @@ public class SudokuGameImp  {
 			}
 		});
 
+		// init players list
         try {
             _dht.get(Number160.ONE).start().awaitUninterruptibly();
         } catch (Exception e) {
             _dht.put(Number160.ONE).data(new Data(playerList)).start().awaitUninterruptibly();
         }
-
+		// init games list
         try {
             _dht.get(Number160.ZERO).start().awaitUninterruptibly();
         } catch (Exception e) {
@@ -64,17 +69,16 @@ public class SudokuGameImp  {
 	public Sudoku generateNewSudoku(String game_name) throws Exception{
 
 		try {
-
 			game_instance = new Sudoku(game_name, user);
 			FutureGet get = _dht.get(Number160.createHash(game_name)).start().awaitUninterruptibly();
 
 			if (get.isSuccess()) {
 
-				if (!get.isEmpty()) { // creare classe eccezzione con super() che chiama expetion
-					throw new Exception("Nome partita " + game_name + " già esistente");
+				if (!get.isEmpty()) { // Match name already used 
+					return null;
 				}
 				_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
-				System.out.print("Generate new sudoku: partita inserita nella dht\n");
+				//System.out.print("Generate new sudoku: partita inserita nella dht\n");
 				updateGamesList();
 				gameList.add(game_name);
 				addToGameList(gameList);
@@ -95,7 +99,7 @@ public class SudokuGameImp  {
 				Sudoku gameIstance = (Sudoku) get.dataMap().values().iterator().next().object();*/
 		ArrayList<Player> peers_on_game = game_instance.getPlayers();
 		for (Player peer : peers_on_game) {
-			System.out.println("Message Sended-... ");
+			//System.out.println("Message Sended-... ");
 			FutureDirect futureDirect = _dht.peer().sendDirect(peer.getAddress()).object(game_instance).start();
 			futureDirect.awaitUninterruptibly();
 		}
@@ -106,7 +110,7 @@ public class SudokuGameImp  {
 
 		try {
 				_dht.put(Number160.ZERO).data(new Data(gameList)).start().awaitUninterruptibly();
-				System.out.print("game added: "+ gameList.toString());
+				//System.out.print("game added: "+ gameList.toString());
 			} catch ( Exception e) {
 				e.printStackTrace();
 			}
@@ -173,7 +177,6 @@ public class SudokuGameImp  {
 	}
 
 	public Integer[][] getSudoku(String game_name) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -188,11 +191,11 @@ public class SudokuGameImp  {
 			if (!futureGet.isSuccess() || futureGet.isEmpty())
 				return null;
 
-
 			score = game_instance.putNumber(_value, _i, _j, user.getNickname());
 			if (score != 0)
 				_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
-
+			
+				// game finisced, remove the match from the list
 			if (score == 99) {
 				updateGamesList();
 				gameList.remove(game_name);
@@ -200,7 +203,7 @@ public class SudokuGameImp  {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			sendMessage();
+			//sendMessage();
 		}
 
 		sendMessage();
@@ -234,15 +237,15 @@ public class SudokuGameImp  {
 
 	public void updateGamesList() throws Exception {
 
-            try {
-            	FutureGet get = _dht.get(Number160.ZERO).start().awaitUninterruptibly();
-              	if (!get.isEmpty()) {
-              		gameList = (ArrayList<String>) get.dataMap().values().iterator().next().object();
-              		System.out.println("Game received " + gameList.toString());
-              	}
-            } catch (Exception e) {
-            	e.printStackTrace();
-            }
+		try {
+			FutureGet get = _dht.get(Number160.ZERO).start().awaitUninterruptibly();
+			if (!get.isEmpty()) {
+				gameList = (ArrayList<String>) get.dataMap().values().iterator().next().object();
+				//System.out.println("Game received " + gameList.toString());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
     public void updatePlayerList() throws Exception {
 
@@ -273,6 +276,8 @@ public class SudokuGameImp  {
 				}
 				return true;
 			}
+			
+			_dht.peer().announceShutdown().start().awaitUninterruptibly();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
