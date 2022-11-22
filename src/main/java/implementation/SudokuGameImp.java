@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 
 import interfaces.MessageListener;
+import interfaces.SudokuGameImpInterface;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
@@ -17,7 +18,7 @@ import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.rpc.ObjectDataReply;
 import net.tomp2p.storage.Data;
 
-public class SudokuGameImp  {
+public class SudokuGameImp implements SudokuGameImpInterface{
 	final private Peer peer;
 	final private PeerDHT _dht;
 	final private int DEFAULT_MASTER_PORT = 4000;
@@ -27,9 +28,6 @@ public class SudokuGameImp  {
 	public Player user;
 	public Sudoku game_instance;
 
-	public void setUser(Player user) {
-		this.user = user;
-	}
 
 	public SudokuGameImp(int _id, String _master_peer, final MessageListener _listener) throws Exception {
 		peer = new PeerBuilder(Number160.createHash(_id)).ports(DEFAULT_MASTER_PORT + _id).start();
@@ -66,6 +64,7 @@ public class SudokuGameImp  {
         }
 	}
 
+	@Override
 	public Sudoku generateNewSudoku(String game_name) throws Exception{
 
 		try {
@@ -79,9 +78,9 @@ public class SudokuGameImp  {
 				}
 				_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
 				//System.out.print("Generate new sudoku: partita inserita nella dht\n");
-				updateGamesList();
+				downloadGameList();
 				gameList.add(game_name);
-				addToGameList(gameList);
+				syncGameList(gameList);
 				return game_instance;
 			}
 
@@ -92,11 +91,11 @@ public class SudokuGameImp  {
 
 	}
 
+
+	// this procedur is used only into the Auto-refreshClient
+	@Override
 	public void sendMessage() {
-		/*			try {
-		FutureGet get = _dht.get(Number160.createHash(game_name)).start().awaitUninterruptibly();
-			if (get.isSuccess()) {
-				Sudoku gameIstance = (Sudoku) get.dataMap().values().iterator().next().object();*/
+
 		ArrayList<Player> peers_on_game = game_instance.getPlayers();
 		for (Player peer : peers_on_game) {
 			//System.out.println("Message Sended-... ");
@@ -106,7 +105,8 @@ public class SudokuGameImp  {
 
 	}
 
-	private void addToGameList(ArrayList<String> gameList) throws Exception{
+	@Override
+	public void syncGameList(ArrayList<String> gameList) throws Exception{
 
 		try {
 				_dht.put(Number160.ZERO).data(new Data(gameList)).start().awaitUninterruptibly();
@@ -116,6 +116,7 @@ public class SudokuGameImp  {
 			}
 	}
 
+	@Override
 	public boolean addToPlayerList(String player_nick) throws Exception{
 
 		if (findPlayer(player_nick)) {
@@ -134,6 +135,7 @@ public class SudokuGameImp  {
 
 	}
 
+	@Override
 	public boolean findPlayer(String player_nick) throws Exception {
 		updatePlayerList();
 
@@ -142,7 +144,7 @@ public class SudokuGameImp  {
 		else return true;
 	}
 
-
+	@Override
 	public boolean join(String game_name) throws Exception {
 
     	FutureGet get = _dht.get(Number160.createHash(game_name)).start().awaitUninterruptibly();
@@ -151,16 +153,19 @@ public class SudokuGameImp  {
 
 			if (!get.isEmpty()) {
 				game_instance = (Sudoku) get.dataMap().values().iterator().next().object();
+
+				game_instance.addPlayer(this.user);
+				_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
+				sendMessage();//return gameInstace.getGame();
+				return true;
 			}
-			game_instance.addPlayer(this.user);
-			_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
-			sendMessage();//return gameInstace.getGame();
-			return true;
+
 		}
 
 		return false;
 	}
 
+	@Override
 	public Sudoku searchGame(String game_name) throws ClassNotFoundException {
 
 		try {
@@ -176,12 +181,12 @@ public class SudokuGameImp  {
 		return null;
 	}
 
-	public Integer[][] getSudoku(String game_name) {
-		return null;
-	}
-
+	// public Integer[][] getSudoku(String game_name) {
+	// 	return null;
+	// }
+	@Override
 	public Integer placeNumber(String game_name, int _i, int _j, int _value) throws ClassNotFoundException {
-		//this.game_instance = searchGame(game_name);
+
 
 		int score = 0;
 		try {
@@ -189,53 +194,38 @@ public class SudokuGameImp  {
 			futureGet.awaitUninterruptibly();
 
 			if (!futureGet.isSuccess() || futureGet.isEmpty())
-				return null;
+				return null;  // if game does not exist
 
+			game_instance =	(Sudoku) futureGet.dataMap().values().iterator().next().object(); 
 			score = game_instance.putNumber(_value, _i, _j, user.getNickname());
-			if (score != 0)
+			if (score != 0) {
 				_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
 			
-				// game finisced, remove the match from the list
-			if (score == 99) {
-				updateGamesList();
-				gameList.remove(game_name);
-				addToGameList(gameList);
+				// game finished, removing it from the GameList
+				if (score == 99) {
+					downloadGameList();
+					gameList.remove(game_name);
+					syncGameList(gameList);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			//sendMessage();
 		}
-
 		sendMessage();
+		return score; 
 
-		return null;
-
-		//////////// rebuild
-//		if (game_instance == null)
-//			return null;
-//
-//
-//		System.out.println("i: " +_i + " J: " + _j + " val: " + _value);
-//		int score = this.game_instance.putNumber(_value, _i, _j, user);
-//
-//		try {
-//			_dht.put(Number160.createHash(game_name)).data(new Data(this.game_instance)).start().awaitUninterruptibly();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		sendMessage();
-//		return null;
 	}
 
-    public Sudoku getGameInstance() {
-		return game_instance;
-	}
-
+    // public Sudoku getGameInstance() {
+	// 	return game_instance;
+	// }
+	@Override
 	public void setGameInstance(Sudoku game_instance) {
 		this.game_instance = game_instance;
 	}
 
-	public void updateGamesList() throws Exception {
+	@Override
+	public void downloadGameList() throws Exception {
 
 		try {
 			FutureGet get = _dht.get(Number160.ZERO).start().awaitUninterruptibly();
@@ -247,6 +237,8 @@ public class SudokuGameImp  {
 			e.printStackTrace();
 		}
     }
+	
+	@Override
     public void updatePlayerList() throws Exception {
 
         try {
@@ -262,27 +254,48 @@ public class SudokuGameImp  {
         }
     }
 
+	@Override
 	public boolean leaveNetwork() {
 		try {
 			updatePlayerList();
 			FutureGet get = _dht.get(Number160.ONE).start().awaitUninterruptibly();
 
-			if(get.isSuccess()) {
+			for (String p : playerList) {
 
-				if(!get.isEmpty()) {
-					playerList = (ArrayList<String>) get.dataMap().values().iterator().next().object();
-					playerList.remove(user.getNickname());
-					_dht.put(Number160.ONE).data(new Data(playerList)).start().awaitUninterruptibly();
+				if(p.equals(user.getNickname())) {
+
+					if(get.isSuccess()) {
+
+						if(!get.isEmpty()) {
+							playerList = (ArrayList<String>) get.dataMap().values().iterator().next().object();
+							playerList.remove(user.getNickname());
+							_dht.put(Number160.ONE).data(new Data(playerList)).start().awaitUninterruptibly();
+							_dht.peer().announceShutdown().start().awaitUninterruptibly();
+							return true;
+						}
+					}
 				}
-				return true;
 			}
-			
-			_dht.peer().announceShutdown().start().awaitUninterruptibly();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	@Override
+	public void setUser(Player user) {
+		this.user = user;
+	}
+	
+	@Override
+	public Peer getPeer() {
+		return peer;
+	}
+
+	@Override
+	public ArrayList<String> getGameList() {
+		return gameList;
 	}
 
 }

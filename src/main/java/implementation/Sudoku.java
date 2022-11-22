@@ -7,7 +7,6 @@ import java.util.Random;
 public class Sudoku implements Serializable {
 
 	private final String game_name;
-	private final Player owner;
 	private ArrayList<Player> players = new ArrayList<>();
 	private ArrayList<String> scores = new ArrayList<>();
 	private boolean isFinisched = false;
@@ -26,17 +25,6 @@ public class Sudoku implements Serializable {
 			{ 4, 8, 7, 6, 2, 9, 5, 3, 1 }, { 2, 6, 3, 4, 1, 5, 9, 8, 7 }, { 9, 7, 4, 8, 6, 3, 1, 2, 5 },
 			{ 8, 5, 1, 7, 9, 2, 6, 4, 3 }, { 1, 3, 8, 9, 4, 7, 2, 5, 6 }, { 6, 9, 2, 3, 5, 1, 8, 7, 4 },
 			{ 7, 4, 5, 2, 8, 6, 3, 1, 9 } };
-
-	private Integer[][] matrix2ToSolve = { { 7, 0, 0, 0, 0, 0, 2, 0, 0 },
-            { 4, 0, 2, 0, 0, 0, 0, 0, 3 },
-            { 0, 0, 0, 2, 0, 1, 0, 0, 0 },
-            { 3, 0, 0, 1, 8, 0, 0, 9, 7 },
-            { 0, 0, 9, 0, 7, 0, 6, 0, 0 },
-            { 6, 5, 0, 0, 3, 2, 0, 0, 1 },
-            { 0, 0, 0, 4, 0, 9, 0, 0, 0 },
-            { 5, 0, 0, 0, 0, 0, 1, 0, 6 },
-            { 0, 0, 6, 0, 0, 0, 0, 0, 8 }
-         };
 
 	private Integer[][] matrix2Correct = {
 			{ 7, 6, 5, 8, 4, 3, 2, 1, 9 },
@@ -64,7 +52,6 @@ public class Sudoku implements Serializable {
 
 	Sudoku(String game_name, Player player) {
 		this.game_name = game_name;
-		this.owner = player;
 		sudokuList.add(matrix1Correct);
 		sudokuList.add(matrix2Correct);
 		sudokuList.add(matrix3Correct);
@@ -73,17 +60,14 @@ public class Sudoku implements Serializable {
 		addPlayer(player);
 	}
 
-
-
 	public Sudoku(String game_name) {
 		this.game_name = game_name;
-		this.owner = null;
 	}
 
 	public Sudoku() {
 		this.game_name = "";
-		this.owner = null;
 	}
+	
 	public Integer[][] getGame() {
 		return matrixToSolve;
 	}
@@ -129,7 +113,7 @@ public class Sudoku implements Serializable {
 			if (matrixToSolve[i][j] != value  && matrixToSolve[i][j] == 0) {
 				updatePlayerScore(1, player);
 				matrixToSolve[i][j] = value;
-			//	matrixToSolve = matrixCorrect;
+				//matrixToSolve = matrixCorrect; // debug only
 				if(countZero(matrixToSolve)) {
 					isFinisched = true;
 					return 99;
@@ -157,13 +141,10 @@ public class Sudoku implements Serializable {
 		int x=0;
 		int numOnRowToCanc = 7;
 
-
 		for (int i = 0; i < 9; i++)
 			for (int j = 0; j < 9; j++)
 				matrixToSolve[i][j] = SudokuRandom[i][j];
-
-
-		//matrixToSolve = matrixCorrect;
+				
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < numOnRowToCanc; j++) {
 				x = getRandomNumber(0, 9);
@@ -173,12 +154,8 @@ public class Sudoku implements Serializable {
 						matrixToSolve[i][x] = 0;
 					}
 					else
-//						if (numOnRowToCanc != 9)
 						numOnRowToCanc++;
 				}
-			//	else
-//					if (numOnRowToCanc != 9)
-			//			numOnRowToCanc++;
 			}
 
 		}
