@@ -37,4 +37,6 @@ public interface SudokuGameImpInterface {
     public Peer getPeer();
     
     public ArrayList<String> getGameList();
+
+    public boolean leaveSudoku(String game_name) throws Exception;
 }

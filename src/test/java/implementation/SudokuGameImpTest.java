@@ -147,14 +147,26 @@ public class SudokuGameImpTest {
         
     }
 
+
+    @Test
+    void testLeaveSudoku() throws Exception{
+        String existingGameName = "Sudoku1";
+
+        peer1.generateNewSudoku(existingGameName);       
+        assertTrue(peer1.leaveSudoku(existingGameName));
+
+        // if all the players left the sudoku this will be deleted
+        assertFalse(peer2.join(existingGameName));
+    }
+
    // @Test
     void testSendMessage() {
-        // this method doesn't return anything, just send messages at the peer on a specific game
+        // this method doesn't return anything, just send messages at the peer on a specific game (NOT USED in the StaticClient)
     }
 
     //@Test 
     void testSetGameInstance() {
-        // this method is used by the Client, for sync the Sudoku instance every time a player try to place a number (send a message), no rethurn values 
+        // this method is used by the Client, for sync the Sudoku instance every time a player try to place a number (send a message), no rethurn values (NOT USED in the StaticClient)
     }
 
     @Test

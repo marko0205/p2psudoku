@@ -2,6 +2,7 @@ package implementation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 public class Sudoku implements Serializable {
@@ -176,13 +177,20 @@ public class Sudoku implements Serializable {
 		}
 		return false;
 	}
+	
 
 	public ArrayList<Player> getPlayers() {
 		return players;
 	}
 
 	public void removePlayer(Player user) {
-		players.remove(user);
+		Iterator<Player> itr = players.iterator();
+		while (itr.hasNext()) {
+			Player p = itr.next();
+			if (p.getNickname().equals(user.getNickname())) {
+				itr.remove();
+			}
+		}
 	}
 
 	public int getPlayersNumber() {

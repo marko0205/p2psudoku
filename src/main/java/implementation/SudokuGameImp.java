@@ -109,11 +109,11 @@ public class SudokuGameImp implements SudokuGameImpInterface{
 	public void syncGameList(ArrayList<String> gameList) throws Exception{
 
 		try {
-				_dht.put(Number160.ZERO).data(new Data(gameList)).start().awaitUninterruptibly();
-				//System.out.print("game added: "+ gameList.toString());
-			} catch ( Exception e) {
-				e.printStackTrace();
-			}
+			_dht.put(Number160.ZERO).data(new Data(gameList)).start().awaitUninterruptibly();
+			//System.out.print("game added: "+ gameList.toString());
+		} catch ( Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -146,22 +146,58 @@ public class SudokuGameImp implements SudokuGameImpInterface{
 
 	@Override
 	public boolean join(String game_name) throws Exception {
+		try {
+			FutureGet get = _dht.get(Number160.createHash(game_name)).start().awaitUninterruptibly();
 
-    	FutureGet get = _dht.get(Number160.createHash(game_name)).start().awaitUninterruptibly();
+			if (get.isSuccess()) {
 
-		if (get.isSuccess()) {
+				if (!get.isEmpty()) {
+					game_instance = (Sudoku) get.dataMap().values().iterator().next().object();
 
-			if (!get.isEmpty()) {
-				game_instance = (Sudoku) get.dataMap().values().iterator().next().object();
+					game_instance.addPlayer(this.user);
+					_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
+					sendMessage();//return gameInstace.getGame();
+					return true;
+				}
 
-				game_instance.addPlayer(this.user);
-				_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
-				sendMessage();//return gameInstace.getGame();
-				return true;
 			}
-
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return false;
+	}
 
+
+
+
+	@Override
+	public boolean leaveSudoku(String game_name) throws Exception{
+		try {
+			FutureGet get = _dht.get(Number160.createHash(game_name)).start().awaitUninterruptibly();
+
+			if (get.isSuccess()) {
+
+				if (!get.isEmpty()) {
+					game_instance = (Sudoku) get.dataMap().values().iterator().next().object();
+					
+					game_instance.removePlayer(this.user);
+
+					// if no more players are in the game delete it!
+					if(game_instance.getPlayers().isEmpty()) {
+						_dht.remove(Number160.createHash(game_name)).start().awaitUninterruptibly();
+						downloadGameList();
+						gameList.remove(game_name);
+						syncGameList(gameList);
+					}
+					else 
+						_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
+					sendMessage();
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
@@ -201,7 +237,7 @@ public class SudokuGameImp implements SudokuGameImpInterface{
 			if (score != 0) {
 				_dht.put(Number160.createHash(game_name)).data(new Data(game_instance)).start().awaitUninterruptibly();
 			
-				// game finished, removing it from the GameList
+				// game finished, remove it from the GameList
 				if (score == 99) {
 					downloadGameList();
 					gameList.remove(game_name);

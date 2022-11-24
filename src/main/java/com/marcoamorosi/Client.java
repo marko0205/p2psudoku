@@ -77,8 +77,6 @@ public class Client {
            // System.out.println("MyThread score - END "+Thread.currentThread().getName());
 
 		}
-
-
     }
 
     public class threadGameBoard extends Thread {

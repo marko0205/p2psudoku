@@ -52,8 +52,6 @@ public class ClientStatic {
 	
 		public Object parseMessage(Object obj) {
 
-			//Sudoku gameInstance = (Sudoku) obj;
-
 			return "success";
 		}
 	}
@@ -97,7 +95,6 @@ public class ClientStatic {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 
@@ -124,7 +121,7 @@ public class ClientStatic {
 				switch (option) {
 				case 1 : { getSudokuMenu(peer.searchGame(gameName)); break;}
 				case 2 : { inGame(); break; }
-				case 3 : { leaveNetwork(); break;}
+				case 3 : { leaveSudoku(); break;}
 				default : { }
 				}
 			}
@@ -149,7 +146,7 @@ public class ClientStatic {
 	}
 
 	
-	public void getSudokuMenu(Sudoku gameInstance) {
+	public void getSudokuMenu(Sudoku gameInstance) throws Exception {
 		terminal.printf("\033[H\033[2J");
 
 		if(!gameInstance.isFinisched()) {
@@ -159,6 +156,7 @@ public class ClientStatic {
 		}
 		else {
 			printScoreBoard(gameInstance);
+			leaveSudoku();
 			mainMenu=true;
 		}
 	}
@@ -302,7 +300,7 @@ public class ClientStatic {
 		terminal.printf("\n ---------------------\n");
 		terminal.printf("| 1 - Get sudoku      |\n");
 		terminal.printf("| 2 - Place a number  |\n");
-		terminal.printf("| 3 - Exit            |\n");
+		terminal.printf("| 3 - Left sudoku     |\n");
 		terminal.printf(" ---------------------\n");
 	}
 
@@ -317,6 +315,10 @@ public class ClientStatic {
 	}
 
 
+	public void leaveSudoku() throws Exception {
+		peer.leaveSudoku(gameName);
+		mainMenu=true;
+	}
 	
 	public void printWelcome() throws Exception {
 		terminal.printf("\n------------------------------------------\n");
@@ -333,6 +335,4 @@ public class ClientStatic {
 		 user = nick;
 
 	}
-
-
 }
