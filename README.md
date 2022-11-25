@@ -32,7 +32,6 @@ The interace SudokuGameImpInterface contains the following methods:
 - **leaveNetwork**: allows peers to announce the shutdown and logout from the game
 - **leaveSudoku**: allows peers to leave an active or terminated challenge
 
-
 ## Tech 
 
 This project uses a number of open source projects to work properly:
@@ -45,122 +44,52 @@ This project uses a number of open source projects to work properly:
 - [args4j] - Java library for parse command line options/arguments
 - [Text-IO] - library for creating Java console applications
 
+## Building 
+This project is managed by Maven, this application can be built by running mvn package and this process can be made faster with the -DskipTests=true option to avoid performing tests.
 
-## Installation
-
-Dillinger requires [Node.js](https://nodejs.org/) v10+ to run.
-
-Install the dependencies and devDependencies and start the server.
+A Dockerfile is also provided to build a container that performs packaging of the application. To build such container docker use the command:
 
 ```sh
-cd dillinger
-npm i
-node app
+docker build --no-cache -t p2psudoku . 
 ```
 
-For production environments...
+This command must be used in the folder where this repository has been cloned.
+
+
+## Run
+
+The application is packaged in a JAR that can be executed though this command from the project root directory
+```sh
+java -jar target/p2psudoku-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+and passing two arguments: **-m** is the master IP address and **-id** is the peer's unique identifier
+
+For execute in a docker eviroment after create the container, you shuld define a subnet, in order to make the peers communicate
 
 ```sh
-npm install --production
-NODE_ENV=production node app
+docker network create --subnet=172.20.0.0/16 customnetwork
 ```
 
-## Plugins
-
-Dillinger is currently extended with the following plugins.
-Instructions on how to use them in your own application are linked below.
-
-| Plugin | README |
-| ------ | ------ |
-| Dropbox | [plugins/dropbox/README.md][PlDb] |
-| GitHub | [plugins/github/README.md][PlGh] |
-| Google Drive | [plugins/googledrive/README.md][PlGd] |
-| OneDrive | [plugins/onedrive/README.md][PlOd] |
-| Medium | [plugins/medium/README.md][PlMe] |
-| Google Analytics | [plugins/googleanalytics/README.md][PlGa] |
-
-## Development
-
-Want to contribute? Great!
-
-Dillinger uses Gulp + Webpack for fast developing.
-Make a change in your file and instantaneously see your updates!
-
-Open your favorite Terminal and run these commands.
-
-First Tab:
+after that you can run the master node with the following command
 
 ```sh
-node app
+docker run --net customnetwork --ip 172.20.0.10 -e MASTERIP="172.20.0.10" -e ID=0 --name MASTER-PEER p2psudoku
 ```
 
-Second Tab:
+and then all the other peers:
 
 ```sh
-gulp watch
+docker run -i --net customnetwork -e MASTERIP="172.20.0.10" -e ID=X --name PEER-X p2psudoku
 ```
 
-(optional) Third:
 
-```sh
-karma test
-```
-
-#### Building for source
-
-For production release:
-
-```sh
-gulp build --prod
-```
-
-Generating pre-built zip archives for distribution:
-
-```sh
-gulp build dist --prod
-```
-
-## Docker
-
-Dillinger is very easy to install and deploy in a Docker container.
-
-By default, the Docker will expose port 8080, so change this within the
-Dockerfile if necessary. When ready, simply use the Dockerfile to
-build the image.
-
-```sh
-cd dillinger
-docker build -t <youruser>/dillinger:${package.json.version} .
-```
-
-This will create the dillinger image and pull in the necessary dependencies.
-Be sure to swap out `${package.json.version}` with the actual
-version of Dillinger.
-
-Once done, run the Docker image and map the port to whatever you wish on
-your host. In this example, we simply map port 8000 of the host to
-port 8080 of the Docker (or whatever port was exposed in the Dockerfile):
-
-```sh
-docker run -d -p 8000:8080 --restart=always --cap-add=SYS_ADMIN --name=dillinger <youruser>/dillinger:${package.json.version}
-```
-
-> Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.
-
-Verify the deployment by navigating to your server address in
-your preferred browser.
-
-```sh
-127.0.0.1:8000
-```
+## Future developments
 
 ## License
 
 MIT
 
 **Free Software, Hell Yeah!**
-
-[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
    [Java]: <https://docs.oracle.com/en/java/>
    [TomP2P]: <https://github.com/tomp2p/TomP2P>
@@ -170,10 +99,3 @@ MIT
    [args4j]: <https://github.com/kohsuke/args4j>
    [Text-IO]: <https://github.com/beryx/text-io>
   
-
-   [PlDb]: <https://github.com/joemccann/dillinger/tree/master/plugins/dropbox/README.md>
-   [PlGh]: <https://github.com/joemccann/dillinger/tree/master/plugins/github/README.md>
-   [PlGd]: <https://github.com/joemccann/dillinger/tree/master/plugins/googledrive/README.md>
-   [PlOd]: <https://github.com/joemccann/dillinger/tree/master/plugins/onedrive/README.md>
-   [PlMe]: <https://github.com/joemccann/dillinger/tree/master/plugins/medium/README.md>
-   [PlGa]: <https://github.com/RahulHP/dillinger/blob/master/plugins/googleanalytics/README.md>
