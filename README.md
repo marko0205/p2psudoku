@@ -3,41 +3,34 @@
 
 ## Project Description
 Design and develop a Sudoku challenge game on a P2P network. Each user can place a number of the sudoku game; if it is not already placed takes 1 point, if it is already placed and it is rights take 0 points, in other case receive -1 point. The games are based on a 9 x 9 matrix. All users that play to a game are automatically informed when a user increment its score and when the game is finished. The system allows the users to generate (automatically) a new Sudoku challenge identified by a name, join in a challenge using a nickname, get the integer matrix describing the Sudoku challenge, and place a solution number.
-<p align="left"><img src="Assets/sudoku.png" width="300"/></p>
+<p align="left"><img src="Assets/sudoku.png" width="300" style="border: 6px solid black" /></p>
 
 
-Dillinger is a cloud-enabled, mobile-ready, offline-storage compatible,
-AngularJS-powered HTML5 Markdown editor.
-
-- Type some Markdown on the left
-- See HTML in the right
-- ✨Magic ✨
 
 ## Features
 
-- Import a HTML file and watch it magically convert to Markdown
-- Drag and drop images (requires your Dropbox account be linked)
-- Import and save files from GitHub, Dropbox, Google Drive and One Drive
-- Drag and drop markdown and HTML files into Dillinger
-- Export documents as Markdown, HTML and PDF
+- Generate random Sudoku challenge
+- Join a challenge 
+- Multiplayer (tested up to 8 players on a single challenge)
+- Show Scoreboard
+- Leave a challenge
+- Auto-remove completed challenges
 
-Markdown is a lightweight markup language based on the formatting conventions
-that people naturally use in email.
-As [John Gruber] writes on the [Markdown site][df1]
+## API description
 
-> The overriding design goal for Markdown's
-> formatting syntax is to make it as readable
-> as possible. The idea is that a
-> Markdown-formatted document should be
-> publishable as-is, as plain text, without
-> looking like it's been marked up with tags
-> or formatting instructions.
+The interace SudokuGameImpInterface contains the following methods:
 
-This text you see here is *actually- written in Markdown! To get a feel
-for Markdown's syntax, type some text into the left window and
-watch the results in the right.
-
-
+- **generateNewSudoku**: allows the peers to generate & join in a new challenge 
+- **syncGameList**: commit the list of active challenges into the DHT 
+- **addToPlayerList**: allow the peers to login, choosing a nickname
+- **findPlayer**: check if a nickname is available
+- **join**: allow peers to join an active challenge
+- **searchGame**: given a name return an available challenge
+- **placeNumber**: allows peers in a challenge to put a value on the sudoku
+- **downloadGameList**: get the list of active challenges from the DHT 
+- **updatePlayerList**: get the list of logged players 
+- **leaveNetwork**: allows peers to announce the shutdown and logout from the game
+- **leaveSudoku**: allows peers to leave an active or terminated challenge
 
 
 ## Tech 
