@@ -6,7 +6,6 @@ Design and develop a Sudoku challenge game on a P2P network. Each user can place
 <p align="left"><img src="Assets/sudoku.png" width="300" style="border: 6px solid black" /></p>
 
 
-
 ## Features
 
 - Generate random Sudoku challenge
