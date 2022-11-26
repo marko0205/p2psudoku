@@ -18,7 +18,7 @@ Design and develop a Sudoku challenge game on a P2P network. Each user can place
 
 ## API description
 
-The interace SudokuGameImpInterface contains the following methods:
+The interface SudokuGameImpInterface contains the following methods:
 
 - **generateNewSudoku**: allows the peers to generate & join in a new challenge 
 - **syncGameList**: commit the list of active challenges into the DHT 
@@ -37,7 +37,7 @@ After the startup the user will see a welcome message and will be asked to input
 
 Creating a new sudoku, will insert into the DHT a new Sudoku instance (containing all the data about the game and the users scores).
 Joining and put values into a sudoku challenge means retrieve the sudoku instance from the DHT, update the state of the object and put it back into the DHT.
-The main client (StaticClient) do not support the autorefresh, so the user is responsible to refresh his sudoku instance, in order to retrive the last version from the DHT (Autorefresh mode is still in develop... look the future developments)
+The main client (StaticClient) do not support the auto-refresh, so the user is responsible to refresh his sudoku instance, in order to retrive the last version from the DHT (auto-refresh mode is still in develop... look the future developments)
 If a Sudoku is completed, the user can see the Score Board and once all the players left the challenge this will be removed from the DHT.
 
 ## Tech 
@@ -92,7 +92,7 @@ docker run -i --net customnetwork -e MASTERIP="172.20.0.10" -e ID=X --name PEER-
 
 ## Future developments
 
-The class Client is an alternative cliente which implement most of the methods of the inferface described before. Once a player join into a challenge, for each update of the Sudoku instance, a message will be sended to all the interessed peers. Once received, the thread resposable of showing the sudoku board and wait for user input, will be destroyed and restarted with the updated state (passed by the message). 
+The class Client is an alternative cliente which implement most of the methods of the interface described before. Once a player join into a challenge, for each update of the Sudoku instance, a message will be send to all the interested peers. Once received, the thread resposable of showing the sudoku board and wait for user input, will be destroyed and restarted with the updated state (passed by the message). 
 Once the sudoku is completed the users will automatically see the score board and after a few seconds will be redirected to the main menu. 
 All this work till the end of the first game, but once a thread join into another challenge, the threads start behaving abnormally. 
 
