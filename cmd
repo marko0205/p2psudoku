@@ -11,6 +11,7 @@ docker network create --subnet=127.0.0.0/16 mysubnet && docker run -i --net mysu
 docker run -i --net mysubnet -e MASTERIP="127.0.0.2" -e ID=1 --name PEER-1 p2psudoku
 
 
+
 ## usefull commmand for debug 
 docker build --no-cache -t p2psudoku .  
 
