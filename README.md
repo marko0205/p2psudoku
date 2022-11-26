@@ -7,7 +7,7 @@ Design and develop a Sudoku challenge game on a P2P network. Each user can place
 
 ## Features
 
-- Generate random Sudoku challenge
+- Generate a random Sudoku challenge
 - Join a challenge 
 - Multiplayer (tested up to 8 players on a single challenge)
 - Show Scoreboard
@@ -18,7 +18,7 @@ Design and develop a Sudoku challenge game on a P2P network. Each user can place
 
 The interface SudokuGameImpInterface contains the following methods:
 
-- **generateNewSudoku**: allows the peers to generate & join in a new challenge 
+- **generateNewSudoku**: allows the peers to generate & join a new challenge 
 - **syncGameList**: commit the list of active challenges into the DHT 
 - **addToPlayerList**: allow the peers to login, choosing a nickname
 - **findPlayer**: check if a nickname is available
@@ -33,11 +33,11 @@ The interface SudokuGameImpInterface contains the following methods:
 ## Problem solution 
 After the startup the user will see a welcome message and will be asked to input a nickname for access to the menu. 
 
-Creating a new sudoku, will insert into the DHT a new Sudoku instance (containing all the data about the game and the users scores).
-Joining and put values into a sudoku challenge means retrieve the sudoku instance from the DHT, update the state of the object and put it back into the DHT.
-The main client (StaticClient) do not support the auto-refresh, so the user is responsible to refresh his sudoku instance, in order to retrive the last version from the DHT (auto-refresh mode is still in develop... look the future developments).
+Creating a new sudoku will insert into the DHT a new Sudoku instance (containing all the data about the game and the users scores).
+Joining and putting values into a sudoku challenge means that the sudoku instance will be retrieved from the DHT, the state of the object will be updated and it will be put back into the DHT.
+The main client (StaticClient) does not support the auto-refresh, so the user is responsible for refreshing his sudoku instance, in order to retrive the last version from the DHT (auto-refresh mode is still in develop... look the future developments).
 
-Once a Sudoku is completed, the user can see the Score Board and once all the players left the challenge this will be removed from the DHT.
+When a Sudoku is completed, the user can see the Score Board and once all the players will have left the challenge this will be removed from the DHT.
 
 ## Tech 
 
@@ -92,11 +92,11 @@ docker run -i --net customnetwork -e MASTERIP="172.20.0.10" -e ID=X --name PEER-
 
 ## Future developments
 
-The class Client is an alternative client which support auto-refresh and implement most of the methods of the interface described before. Once a player join into a challenge, for each update of the Sudoku instance, a message will be send to all the interested peers. Once received, the thread resposable of showing the sudoku board and wait for user input, will be destroyed and restarted with the updated state (passed by the message). 
-Once the sudoku is completed the users will automatically see the score board and after a few seconds will be redirected to the main menu. 
-All this work till the end of the first game, but once a thread join into another challenge, the threads start behaving abnormally. 
+The class Client is an alternative client which supports auto-refresh and implements most of the methods of the interface described before. Once a player join into a challenge, for each update of the Sudoku instance a message will be sent to all the interested peers. Once received, the thread responsable for showing the sudoku board and wait for user input will be destroyed and restarted with the updated state (passed by the message). 
+Once the sudoku is completed the users will automatically see the score board and after a few seconds they will be redirected to the main menu. 
+All this work until the end of the first game, but when the user joins another challenge, the threads start behaving abnormally. 
 
-One of the main problems is that the terminal read operation is blocking and so sometime the Thread.interrupt() fail. Anyway i still didn't find a work around
+One of the main problems is that the terminal read operation is blocking and so sometime the Thread.interrupt() fails. In any case, I still didn't find a way to solve this problem.s
 
 For these reasons, the static version has been released
 
