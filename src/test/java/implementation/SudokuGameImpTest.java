@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import interfaces.MessageListener;
@@ -40,8 +40,8 @@ public class SudokuGameImpTest {
     private static Player player3;
     private static Player player4;
 
-	@BeforeEach
-	public void init() throws Exception{
+	@BeforeAll
+	public static void init() throws Exception{
 
 		peer1 = new SudokuGameImp(0, "127.0.0.1", new MessageListenerImpl(0)); 
 		peer2 = new SudokuGameImp(1, "127.0.0.1", new MessageListenerImpl(1)); 
@@ -57,19 +57,22 @@ public class SudokuGameImpTest {
         peer2.setUser(player2);
         peer3.setUser(player3);
         peer4.setUser(player4);
+
+        peer1.addToPlayerList("p1");
+        peer1.addToPlayerList("p2");
+        peer1.addToPlayerList("p3");
+        peer1.addToPlayerList("p4");
     }
 
 
-	@AfterEach
-	public void terminate() {
+	@AfterAll
+	public static void terminate() throws Exception {
+        
 		peer1.leaveNetwork();
 		peer2.leaveNetwork();
 		peer3.leaveNetwork();
 		peer4.leaveNetwork();
-		peer1 = null;
-		peer2 = null;
-		peer3 = null;
-		peer4 = null;
+
 	}
     
     @Test
@@ -92,11 +95,13 @@ public class SudokuGameImpTest {
 
     @Test
     void testGenerateNewSudoku() throws Exception {
-        String gameName = "Sudoku1";
+        String gameName = "Sudoku";
         assertNotNull(peer1.generateNewSudoku(gameName));
         
         // if the game name is already used return null
         assertNull(peer2.generateNewSudoku(gameName));
+
+        peer1.leaveSudoku("Sudoku");
     }
 
     @Test
@@ -108,6 +113,8 @@ public class SudokuGameImpTest {
         
         assertTrue(peer2.join(existingGameName));
         assertFalse(peer3.join(notExistingGameName));
+        peer1.leaveSudoku("Sudoku1");
+        
     }
 
     @Test
@@ -127,12 +134,13 @@ public class SudokuGameImpTest {
         peer1.generateNewSudoku(existingGameName);
         peer2.join(existingGameName);
 
-        // insert into a valid game, return the point gained or losed 
+        // insert into a valid game, return the point gained or losed ( 1 || 0 || -1)
         assert 0==peer2.placeNumber(existingGameName, 0, 0, 1) || 1==peer2.placeNumber(existingGameName, 0, 0, 1) || -1==peer2.placeNumber(existingGameName, 0, 0, 1);
 
-        // insert into a not valid game, return 0
+        // insert into a not valid game, return null
         assertEquals(null,  peer2.placeNumber(notExistingGameName, 0, 0, 1));
-
+        peer1.leaveSudoku("Sudoku1");
+        peer2.leaveSudoku(existingGameName);
     }
 
     @Test
@@ -151,11 +159,11 @@ public class SudokuGameImpTest {
     void testLeaveSudoku() throws Exception{
         String existingGameName = "Sudoku";
 
-        peer3.generateNewSudoku(existingGameName);       
-        assertTrue(peer3.leaveSudoku(existingGameName));
+        peer1.generateNewSudoku(existingGameName);    
+        assertTrue(peer1.leaveSudoku(existingGameName));
 
         // if all the players left the sudoku this will be deleted
-        assertFalse(peer4.join(existingGameName));
+        assertFalse(peer2.join(existingGameName));
     }
 
    // @Test
@@ -187,5 +195,9 @@ public class SudokuGameImpTest {
         assertEquals(1, gameList.size());
     }
 
+    //@test
+    void downloadGameList(){
+        // already been covered by the previous test 
+    }
 
 }

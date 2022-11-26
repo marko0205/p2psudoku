@@ -186,7 +186,8 @@ public class SudokuGameImp implements SudokuGameImpInterface{
 
 					// if no more players are in the game delete it!
 					if(game_instance.getPlayers().isEmpty()) {
-						_dht.remove(Number160.createHash(game_name)).start().awaitUninterruptibly();
+						//_dht.remove(Number160.createHash(game_name)).start().awaitUninterruptibly();
+						_dht.remove(Number160.createHash(game_name)).all().start().awaitUninterruptibly();
 						downloadGameList();
 						gameList.remove(game_name);
 						syncGameList(gameList);

@@ -79,7 +79,7 @@ docker network create --subnet=172.20.0.0/16 customnetwork
 after that you can run the master node with the following command
 
 ```sh
-docker run --net customnetwork --ip 172.20.0.10 -e MASTERIP="172.20.0.10" -e ID=0 --name MASTER-PEER p2psudoku
+docker run -i --net customnetwork --ip 172.20.0.10 -e MASTERIP="172.20.0.10" -e ID=0 --name MASTER-PEER p2psudoku
 ```
 
 and then all the other peers:
