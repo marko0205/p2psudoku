@@ -32,6 +32,14 @@ The interace SudokuGameImpInterface contains the following methods:
 - **leaveNetwork**: allows peers to announce the shutdown and logout from the game
 - **leaveSudoku**: allows peers to leave an active or terminated challenge
 
+## Problem solution 
+After the startup the user will see a welcome message and will be asked to input a nickname for access to the menu. 
+
+Creating a new sudoku, will insert into the DHT a new Sudoku instance (containing all the data about the game and the users scores).
+Joining and put values into a sudoku challenge means retrieve the sudoku instance from the DHT, update the state of the object and put it back into the DHT.
+The main client (StaticClient) do not support the autorefresh, so the user is responsible to refresh his sudoku instance, in order to retrive the last version from the DHT (Autorefresh mode is still in develop... look the future developments)
+If a Sudoku is completed, the user can see the Score Board and once all the players left the challenge this will be removed from the DHT.
+
 ## Tech 
 
 This project uses a number of open source projects to work properly:
@@ -54,7 +62,6 @@ docker build --no-cache -t p2psudoku .
 ```
 
 This command must be used in the folder where this repository has been cloned.
-
 
 ## Run
 
@@ -85,6 +92,13 @@ docker run -i --net customnetwork -e MASTERIP="172.20.0.10" -e ID=X --name PEER-
 
 ## Future developments
 
+The class Client is an alternative cliente which implement most of the methods of the inferface described before. Once a player join into a challenge, for each update of the Sudoku instance, a message will be sended to all the interessed peers. Once received, the thread resposable of showing the sudoku board and wait for user input, will be destroyed and restarted with the updated state (passed by the message). 
+Once the sudoku is completed the users will automatically see the score board and after a few seconds will be redirected to the main menu. 
+All this work till the end of the first game, but once a thread join into another challenge, the threads start behaving abnormally. 
+
+One of the main problems is that the terminal read operation is blocking and you can't always interrupt the thread correctly.
+
+For these reasons, the static version has been released
 ## License
 
 MIT
