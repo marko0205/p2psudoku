@@ -142,21 +142,20 @@ public class SudokuGameImpTest {
         String notExistingGameName = "Sudoku2";
 
         peer1.generateNewSudoku(existingGameName);
-        assertNotNull(peer2.searchGame(existingGameName));
+        assertNotNull(peer1.searchGame(existingGameName));
         assertNull(peer2.searchGame(notExistingGameName));
         
     }
 
-
     @Test
     void testLeaveSudoku() throws Exception{
-        String existingGameName = "Sudoku1";
+        String existingGameName = "Sudoku";
 
-        peer1.generateNewSudoku(existingGameName);       
-        assertTrue(peer1.leaveSudoku(existingGameName));
+        peer3.generateNewSudoku(existingGameName);       
+        assertTrue(peer3.leaveSudoku(existingGameName));
 
         // if all the players left the sudoku this will be deleted
-        assertFalse(peer2.join(existingGameName));
+        assertFalse(peer4.join(existingGameName));
     }
 
    // @Test

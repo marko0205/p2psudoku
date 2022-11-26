@@ -97,10 +97,12 @@ public class SudokuGameImp implements SudokuGameImpInterface{
 	public void sendMessage() {
 
 		ArrayList<Player> peers_on_game = game_instance.getPlayers();
-		for (Player peer : peers_on_game) {
-			//System.out.println("Message Sended-... ");
-			FutureDirect futureDirect = _dht.peer().sendDirect(peer.getAddress()).object(game_instance).start();
-			futureDirect.awaitUninterruptibly();
+		if(!peers_on_game.isEmpty()) {
+			for (Player peer : peers_on_game) {
+				//System.out.println("Message Sended-... ");
+				FutureDirect futureDirect = _dht.peer().sendDirect(peer.getAddress()).object(game_instance).start();
+				futureDirect.awaitUninterruptibly();
+			}
 		}
 
 	}
