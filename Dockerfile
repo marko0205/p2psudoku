@@ -5,7 +5,7 @@ RUN git clone https://github.com/marko0205/p2psudoku.git
 FROM maven:3.5-jdk-8-alpine 
 WORKDIR /app 
 COPY --from=0 /app/p2psudoku /app 
-RUN mvn package -DskipTests=true
+RUN mvn package 
  
 FROM openjdk:8-jre-alpine 
 WORKDIR /app 

@@ -27,7 +27,7 @@ public class ClientStatic {
 	boolean mainMenu;
 	String user = null;
     String gameName = null;
-
+	String lastScoreDone = null;
 	
 
     public ClientStatic(String[] args) throws CmdLineException {
@@ -147,7 +147,7 @@ public class ClientStatic {
 
 	
 	public void getSudokuMenu(Sudoku gameInstance) throws Exception {
-		terminal.printf("\033[H\033[2J");
+		//terminal.printf("\033[H\033[2J");
 
 		if(!gameInstance.isFinisched()) {
 			Integer board[][] =  gameInstance.getGame();
@@ -157,7 +157,7 @@ public class ClientStatic {
 		else {
 			printScoreBoard(gameInstance);
 			leaveSudoku();
-			mainMenu=true;
+			//mainMenu=true;
 		}
 	}
 
@@ -177,18 +177,30 @@ public class ClientStatic {
 
 				int score = peer.placeNumber(gameName, Integer.parseInt(arr[1]), j, Integer.parseInt(arr[3]));
 				if(score == 0) {
-					terminal.printf("Value aready present! +0 point\n");
+					lastScoreDone= "Value aready present! +0 point\n";
+					//terminal.printf("Value aready present! +0 point\n");
 				}
 				if(score > 0) {
-					terminal.printf("Congratulation successful insert! +1 point\n");
+					lastScoreDone="Congratulation successful insert! +1 point\n";
+					//terminal.printf("Congratulation successful insert! +1 point\n");
 				}
 				if(score < 0) {
-					terminal.printf("Insert not valid! -1 point\n");
+					lastScoreDone="Insert not valid! -1 point\n";
+					//terminal.printf("Insert not valid! -1 point\n");
+				}
+				if(score == 99 ){
+					lastScoreDone="Congratulations you insert the last value! \n";
+					//terminal.printf("Congratulations you insert the last value! \n");
 				}
 				break;
 			}
 			else 
 				terminal.printf("Please respect the format A0=2\n");
+		}
+		try {
+			getSudokuMenu(peer.searchGame(gameName));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -296,12 +308,15 @@ public class ClientStatic {
 
     public void printMenuInGame() {
 		terminal.resetToBookmark(book_clear);
-		terminal.printf(" Joined in "+ gameName +", pick a choiche: \n");
-		terminal.printf("\n ---------------------\n");
-		terminal.printf("| 1 - Get sudoku      |\n");
-		terminal.printf("| 2 - Place a number  |\n");
-		terminal.printf("| 3 - Left sudoku     |\n");
-		terminal.printf(" ---------------------\n");
+		if (lastScoreDone==null)
+			terminal.printf(" Game: "+ gameName +", pick a choiche: \n");
+		else 
+		terminal.printf(lastScoreDone);
+		terminal.printf("\n ----------------------\n");
+		terminal.printf("| 1 - Get/Refresh game |\n");
+		terminal.printf("| 2 - Place a number   |\n");
+		terminal.printf("| 3 - Left game        |\n");
+		terminal.printf(" ----------------------\n");
 	}
 
 	public void leaveNetwork() {
@@ -317,6 +332,7 @@ public class ClientStatic {
 
 	public void leaveSudoku() throws Exception {
 		peer.leaveSudoku(gameName);
+		lastScoreDone=null;
 		mainMenu=true;
 	}
 	
@@ -331,7 +347,7 @@ public class ClientStatic {
 			 nick = textIO.newStringInputReader().read("Nickname già esistente! Nick: ");
 		 }
 		// peer.addToPlayerList(nick);
-		 user = nick;
+		user = nick;
 
 	}
 }
