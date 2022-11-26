@@ -37,19 +37,19 @@ Creating a new sudoku will insert into the DHT a new Sudoku instance (containing
 Joining and putting values into a sudoku challenge means that the sudoku instance will be retrieved from the DHT, the state of the object will be updated and it will be put back into the DHT.
 The main client (StaticClient) does not support the auto-refresh, so the user is responsible for refreshing his sudoku instance, in order to retrive the last version from the DHT (auto-refresh mode is still in develop... look the future developments).
 
-When a Sudoku is completed, the user can see the Score Board and once all the players will have left the challenge this will be removed from the DHT.
+When a Sudoku is completed, the user can see the score board and once all the players will have left the challenge this will be removed from the DHT.
 
 ## Tech 
 
 This project uses a number of open source projects to work properly:
 
-- [Java] - programming language
-- [TomP2P] - Library to create the DHT
+- [Java] - Programming language
+- [TomP2P] - Library used to create the DHT
 - [Maven] - Project management used to develop
 - [JUnit-5] - Framework used for testing 
 - [Docker] - Software used to manage containers
 - [args4j] - Java library to parse command line options/arguments
-- [Text-IO] - library for creating Java console applications
+- [Text-IO] - Library for creating Java console applications
 
 ## Building 
 This project is managed by Maven, the application can be built by running mvn package
@@ -96,7 +96,7 @@ The class Client is an alternative client which supports auto-refresh and implem
 Once the sudoku is completed the users will automatically see the score board and after a few seconds they will be redirected to the main menu. 
 All this work until the end of the first game, but when the user joins another challenge, the threads start behaving abnormally. 
 
-One of the main problems is that the terminal read operation is blocking and so sometime the Thread.interrupt() fails. In any case, I still didn't find a way to solve this problem.s
+One of the main problems is that the terminal read operation is blocking and so sometime the Thread.interrupt() fails. In any case, I still didn't find a way to solve this problem
 
 For these reasons, the static version has been released
 
