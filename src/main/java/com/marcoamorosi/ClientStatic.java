@@ -25,7 +25,7 @@ public class ClientStatic {
 	TextTerminal<?> terminal = null;
 	String book_clear = null;
 	boolean mainMenu;
-	String user = null;
+	String userNick = null;
     String gameName = null;
 	String lastScoreDone = null;
 	
@@ -292,7 +292,7 @@ public class ClientStatic {
 	
 	public void printMenu() {
 		terminal.resetToBookmark(book_clear);
-		terminal.printf(" Hello "+ user +", pick a choiche: \n");
+		terminal.printf(" Hello "+ userNick +", pick a choiche: \n");
 		terminal.printf("\n ---------------------\n");
 		terminal.printf("| 1 - Create new game |\n");
 		terminal.printf("| 2 - Join a game     |\n");
@@ -336,11 +336,10 @@ public class ClientStatic {
 		terminal.printf("\n------------------------------------------\n");
 		terminal.printf("\nTo begin choose a nickname: \n");
 
-		String nick = textIO.newStringInputReader().read("Nickname:");
-		 while (!peer.addToPlayerList(nick)) {
-			 nick = textIO.newStringInputReader().read("Nickname già esistente! Nick: ");
+		String userNick = textIO.newStringInputReader().read("Nickname:");
+		 while (!peer.addToPlayerList(userNick)) {
+			userNick = textIO.newStringInputReader().read("Nickname già esistente! Nick: ");
 		 }
-		user = nick;
 
 	}
 }

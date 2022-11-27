@@ -35,7 +35,7 @@ After the startup the user will see a welcome message and will be asked to input
 
 Creating a new sudoku will insert into the DHT a new Sudoku instance (containing all the data about the game and the users scores).
 Joining and putting values into a sudoku challenge means that the sudoku instance will be retrieved from the DHT, the state of the object will be updated and it will be put back into the DHT.
-The main client (StaticClient) does not support the auto-refresh, so the user is responsible for refreshing his sudoku instance, in order to retrive the last version from the DHT (auto-refresh mode is still in develop... look the future developments).
+The main client (StaticClient) does not support the auto-refresh, so the user is responsible for refreshing his sudoku instance, in order to retrive the last version from the DHT (but this is only for visual purpose, the sequential consistency of the operations is always respected).
 
 When a Sudoku is completed, the user can see the score board and once all the players will have left the challenge this will be removed from the DHT.
 
