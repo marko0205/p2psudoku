@@ -210,18 +210,12 @@ public class ClientStatic {
 		ArrayList<String> scores = gameInstance.getAndUpdateScores();
 		terminal.resetToBookmark(book_clear);
 
-		int x = scores.size()-1;
-
 		terminal.printf(" --------- G A M E  F I N I S H ---------\n\n");
-
 		terminal.print("Players\t\tScores\n");
+
+		int x = scores.size()-1;
 		for(; x>=0; x--)
 			terminal.println(scores.get(x).toString());
-		try {
-			showMenu();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void printBoard(Integer board[][], ArrayList<String> scores) {
@@ -346,7 +340,6 @@ public class ClientStatic {
 		 while (!peer.addToPlayerList(nick)) {
 			 nick = textIO.newStringInputReader().read("Nickname già esistente! Nick: ");
 		 }
-		// peer.addToPlayerList(nick);
 		user = nick;
 
 	}
