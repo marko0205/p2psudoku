@@ -336,10 +336,9 @@ public class ClientStatic {
 		terminal.printf("\n------------------------------------------\n");
 		terminal.printf("\nTo begin choose a nickname: \n");
 
-		String userNick = textIO.newStringInputReader().read("Nickname:");
+		userNick = textIO.newStringInputReader().read("Nickname:");
 		 while (!peer.addToPlayerList(userNick)) {
 			userNick = textIO.newStringInputReader().read("Nickname già esistente! Nick: ");
 		 }
-
 	}
 }
